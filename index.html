@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Lua Obfuscator</title>
+    <title>Moon Obfuscator</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -74,26 +74,30 @@
             const inputCode = document.getElementById('inputCode').value;
             let obfuscatedCode = inputCode;
 
-            // Basic Obfuscation: Removing whitespace and comments
-            obfuscatedCode = obfuscatedCode.replace(/\s+/g, ' '); // remove extra spaces
-            obfuscatedCode = obfuscatedCode.replace(/--.*$/gm, ''); // remove single-line comments
-
-            // Renaming variables (simple example)
+            // Simple function to generate obfuscated names
             const variableMap = {};
             let variableCounter = 1;
-            obfuscatedCode = obfuscatedCode.replace(/\b([a-zA-Z_][a-zA-Z0-9_]*)\b/g, function(match) {
-                if (!variableMap[match]) {
-                    variableMap[match] = 'var' + variableCounter++;
+            const generateObfuscatedName = (baseName) => {
+                return baseName + '_' + variableCounter++;
+            }
+
+            // Match all identifiers (variable names, function names)
+            const identifierPattern = /\b([a-zA-Z_][a-zA-Z0-9_]*)\b/g;
+
+            obfuscatedCode = obfuscatedCode.replace(identifierPattern, (match, group1) => {
+                // Skip renaming of Lua keywords or existing variables like 'print', 'game', 'workspace'
+                const luaKeywords = ['if', 'else', 'end', 'function', 'return', 'while', 'for', 'local', 'game', 'workspace'];
+                if (luaKeywords.includes(group1)) {
+                    return group1; // Don't rename Lua keywords
                 }
-                return variableMap[match];
+                // Otherwise, rename the variable
+                if (!variableMap[group1]) {
+                    variableMap[group1] = generateObfuscatedName(group1);
+                }
+                return variableMap[group1];
             });
 
-            // Add some randomness
-            obfuscatedCode = obfuscatedCode.split('').map(function(c) {
-                return Math.random() > 0.9 ? c.toUpperCase() : c;
-            }).join('');
-
-            // Output obfuscated code
+            // Output the obfuscated code
             document.getElementById('output').value = obfuscatedCode;
         }
     </script>
