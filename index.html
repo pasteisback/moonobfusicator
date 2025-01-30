@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Lua Obfuscator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        textarea {
+            width: 80%;
+            height: 300px;
+            margin: 10px;
+            padding: 10px;
+            font-size: 16px;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            resize: none;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #output {
+            width: 80%;
+            height: 300px;
+            margin-top: 20px;
+            padding: 10px;
+            font-size: 16px;
+            background-color: #f0f0f0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            resize: none;
+            color: #333;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Moon Obfusicator</h1>
+
+    <textarea id="inputCode" placeholder="Paste your Lua code here..."></textarea>
+    <button onclick="obfuscateCode()">Obfuscate Code</button>
+
+    <textarea id="output" readonly placeholder="Obfuscated Lua code will appear here..."></textarea>
+
+    <script>
+        function obfuscateCode() {
+            const inputCode = document.getElementById('inputCode').value;
+            let obfuscatedCode = inputCode;
+
+            // Basic Obfuscation: Removing whitespace and comments
+            obfuscatedCode = obfuscatedCode.replace(/\s+/g, ' '); // remove extra spaces
+            obfuscatedCode = obfuscatedCode.replace(/--.*$/gm, ''); // remove single-line comments
+
+            // Renaming variables (simple example)
+            const variableMap = {};
+            let variableCounter = 1;
+            obfuscatedCode = obfuscatedCode.replace(/\b([a-zA-Z_][a-zA-Z0-9_]*)\b/g, function(match) {
+                if (!variableMap[match]) {
+                    variableMap[match] = 'var' + variableCounter++;
+                }
+                return variableMap[match];
+            });
+
+            // Add some randomness
+            obfuscatedCode = obfuscatedCode.split('').map(function(c) {
+                return Math.random() > 0.9 ? c.toUpperCase() : c;
+            }).join('');
+
+            // Output obfuscated code
+            document.getElementById('output').value = obfuscatedCode;
+        }
+    </script>
+
+</body>
+</html>
